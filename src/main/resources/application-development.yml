@@ -1,0 +1,12 @@
+postgresql:
+  username: cart
+  password: cart
+  schema: cart
+  url: localhost:3306
+
+server:
+  port: ${PORT:8080}
+  undertow:
+    threads:
+      worker: 10
+      io: 2

@@ -1,0 +1,29 @@
+version: '3.7'
+services:
+  cart:
+    container_name: cart
+    build:
+      context: ./
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_POSTGRESQL_USERNAME: cart
+      DATABASE_POSTGRESQL_PASSWORD: cart
+      DATABASE_POSTGRESQL_SCHEMA: cart
+      DATABASE_POSTGRESQL_URL: postgres:5432
+      PORT: 8080
+  postgres:
+    image: postgres
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: cart
+      POSTGRES_PASSWORD: cart
+      POSTGRES_DB: cart
+
+networks:
+  default:
+    driver: bridge

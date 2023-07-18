@@ -1,0 +1,11 @@
+postgresql:
+  username: ${DATABASE_POSTGRESQL_USERNAME:cart}
+  password: ${DATABASE_POSTGRESQL_PASSWORD:cart}
+  schema: ${DATABASE_POSTGRESQL_SCHEMA:cart}
+  url: ${DATABASE_POSTGRESQL_URL:localhost:5432}
+
+spring:
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: none

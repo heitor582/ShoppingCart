@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java_version: ['17']
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '${{matrix.java_version}}'
+      - name: Executar testes de unidade
+        run: cd FinancialAccount && ./gradlew test --tests '*Test'
+      - name: Executar testes de integração
+        run: cd FinancialAccount && ./gradlew test --tests '*IT'
