@@ -19,6 +19,6 @@ jobs:
         with:
           java-version: '${{matrix.java_version}}'
       - name: Executar testes de unidade
-        run: cd FinancialAccount && ./gradlew test --tests '*Test'
+        run: ./gradlew test --tests '*Test'
       - name: Executar testes de integração
-        run: cd FinancialAccount && ./gradlew test --tests '*IT'
+        run: ./gradlew test --tests '*IT'
