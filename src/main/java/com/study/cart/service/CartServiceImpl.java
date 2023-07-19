@@ -1,6 +1,6 @@
 package com.study.cart.service;
 
-import com.study.cart.contants.Items;
+import com.study.cart.constants.Items;
 import com.study.cart.entities.Cart;
 import com.study.cart.entities.Item;
 import com.study.cart.exception.NotFoundException;
@@ -12,6 +12,7 @@ import com.study.cart.service.dtos.CloseCartOutput;
 import com.study.cart.service.dtos.CreateCartOutput;
 import com.study.cart.service.dtos.ItemOperationInput;
 import com.study.cart.service.dtos.ListCartOutput;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +44,7 @@ public class CartServiceImpl implements CartService{
     }
 
     @Override
+    @Transactional
     public CloseCartOutput close(final Long id) {
         final Cart cart = repository.findById(id).orElseThrow(() -> NotFoundException.with(Cart.class, id));
 
@@ -52,36 +54,42 @@ public class CartServiceImpl implements CartService{
 
         List<Item> items = cart.getItems().stream().sorted().toList();
 
-        int remaingDiscountItems = totalDiscountItems;
+        int remainingDiscountItems = totalDiscountItems;
         int index = 0;
 
-        while(remaingDiscountItems > 0) {
+        while(remainingDiscountItems > 0) {
             final var item = items.get(index);
             final var itemQuantity = item.getQuantity();
-            cart.removeItem(Item.from(item, remaingDiscountItems));
+            cart.removeItem(Item.from(item, remainingDiscountItems));
             if(item.getQuantity() == 0) {
-                remaingDiscountItems = totalDiscountItems - itemQuantity;
+                remainingDiscountItems = totalDiscountItems - itemQuantity;
                 index++;
             } else {
-                remaingDiscountItems = 0;
+                remainingDiscountItems = 0;
             }
         }
 
+        final double totalDiscountPrice = items.stream().map(Item::getTotalOf).reduce(0.0, Double::sum);
+
+        repository.save(cart.emptyItems());
+
         return new CloseCartOutput(
                 totalPrice,
-                items.stream().map(Item::getTotalOf).reduce(0.0, Double::sum),
+                totalDiscountPrice,
                 totalItems,
                 totalItems - totalDiscountItems
         );
     }
 
     @Override
+    @Transactional
     public CartOutput emptyById(final Long id) {
         final Cart cart = repository.findById(id).orElseThrow(() -> NotFoundException.with(Cart.class, id));
         return CartOutput.from(repository.save(cart.emptyItems()));
     }
 
     @Override
+    @Transactional
     public CartOutput removeItem(final ItemOperationInput input) {
         final Cart cart = repository.findById(input.cartId()).orElseThrow(() -> NotFoundException.with(Cart.class, input.cartId()));
         final Items itemData = Items.valuesOf(input.itemId());
@@ -89,11 +97,12 @@ public class CartServiceImpl implements CartService{
             throw NotFoundFromItemEnum.with();
         }
 
-        cart.removeItem(Item.newItem(itemData, input.quantity(), cart));
+        cart.removeItem(Item.newItem(itemData, input.quantity()));
         return CartOutput.from(repository.save(cart));
     }
 
     @Override
+    @Transactional
     public CartOutput addItem(final ItemOperationInput input) {
         final Cart cart = repository.findById(input.cartId()).orElseThrow(() -> NotFoundException.with(Cart.class, input.cartId()));
         final Items itemData = Items.valuesOf(input.itemId());
@@ -101,7 +110,7 @@ public class CartServiceImpl implements CartService{
             throw NotFoundFromItemEnum.with();
         }
 
-        cart.addItem(Item.newItem(itemData, input.quantity(), cart));
+        cart.addItem(Item.newItem(itemData, input.quantity()));
         return CartOutput.from(repository.save(cart));
     }
 }

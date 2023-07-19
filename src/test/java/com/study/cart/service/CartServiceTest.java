@@ -1,7 +1,7 @@
 package com.study.cart.service;
 
 import com.study.cart.UnitTest;
-import com.study.cart.contants.Items;
+import com.study.cart.constants.Items;
 import com.study.cart.entities.Cart;
 import com.study.cart.entities.Item;
 import com.study.cart.exception.NotFoundException;
@@ -56,7 +56,7 @@ class CartServiceTest extends UnitTest {
 
         //then
         assertEquals(output.currentPage(), page.getPageNumber());
-        assertEquals(output.items(), List.of());
+        assertEquals(output.content(), List.of());
     }
 
     @Test
@@ -72,7 +72,7 @@ class CartServiceTest extends UnitTest {
 
         //then
         assertEquals(output.currentPage(), page.getPageNumber());
-        assertEquals(output.items().size(), carts.size());
+        assertEquals(output.content().size(), carts.size());
     }
 
     @Test
@@ -139,8 +139,8 @@ class CartServiceTest extends UnitTest {
         //given
         final Long expectedId = 1L;
         final Cart cart = Cart.newCart();
-        final Item item1 = Item.newItem(Items.DRESS, 10, cart);
-        final Item item2 = Item.newItem(Items.T_SHIRT, 9, cart);
+        final Item item1 = Item.newItem(Items.DRESS, 10);
+        final Item item2 = Item.newItem(Items.T_SHIRT, 9);
 
         cart.addItem(item1);
         cart.addItem(item2);
@@ -154,6 +154,7 @@ class CartServiceTest extends UnitTest {
         //then
         assertNotNull(output);
         assertEquals(0, output.items().size());
+        assertEquals(0, output.totalItems());
 
 
         verify(cartRepository).findById(expectedId);
@@ -175,6 +176,7 @@ class CartServiceTest extends UnitTest {
         //then
         assertNotNull(output);
         assertEquals(0, output.items().size());
+        assertEquals(0, output.totalItems());
 
 
         verify(cartRepository).findById(expectedId);
@@ -246,7 +248,7 @@ class CartServiceTest extends UnitTest {
         //given
         final Long expectedId = 1L;
         final Cart cart = Cart.newCart();
-        cart.addItem(Item.newItem(Items.T_SHIRT, 10, cart));
+        cart.addItem(Item.newItem(Items.T_SHIRT, 10));
         when(cartRepository.findById(expectedId)).thenReturn(Optional.of(Cart.from(cart)));
         when(cartRepository.save(any())).thenAnswer(returnsFirstArg());
 
@@ -294,7 +296,7 @@ class CartServiceTest extends UnitTest {
         final Cart cart = Cart.newCart();
         final String expectedErrorMessage = "The item passed cannot be processable";
 
-        cart.addItem(Item.newItem(Items.T_SHIRT, 10, cart));
+        cart.addItem(Item.newItem(Items.T_SHIRT, 10));
         when(cartRepository.findById(expectedId)).thenReturn(Optional.of(Cart.from(cart)));
 
         //when
@@ -312,7 +314,7 @@ class CartServiceTest extends UnitTest {
         //given
         final Long expectedId = 1L;
         final Cart cart = Cart.newCart();
-        cart.addItem(Item.newItem(Items.T_SHIRT, 9, cart));
+        cart.addItem(Item.newItem(Items.T_SHIRT, 9));
         when(cartRepository.findById(expectedId)).thenReturn(Optional.of(Cart.from(cart)));
         when(cartRepository.save(any())).thenAnswer(returnsFirstArg());
 
@@ -343,7 +345,7 @@ class CartServiceTest extends UnitTest {
         final Long expectedId = 1L;
         final Cart cart = Cart.newCart();
         cart.addItems(items);
-        when(cartRepository.findById(expectedId)).thenReturn(Optional.of(Cart.from(cart)));
+        when(cartRepository.findById(expectedId)).thenReturn(Optional.of(cart));
 
         //when
         final var output = cartService.close(expectedId);
@@ -353,39 +355,39 @@ class CartServiceTest extends UnitTest {
         assertEquals(totalPrice, output.totalPrice());
         assertEquals(totalItems, output.totalItems());
         assertEquals(discountPrice, output.discountPrice());
+        assertEquals(0, cart.getTotalItems());
     }
 
     private static Stream<Arguments> provideCloseCartTestItems() {
-        final Cart cart = Cart.newCart();
         return Stream.of(
                 Arguments.of(
-                        List.of(Item.newItem(Items.T_SHIRT, 1, cart),
-                                Item.newItem(Items.JEANS, 2, cart),
-                                Item.newItem(Items.DRESS, 3, cart)),
+                        List.of(Item.newItem(Items.T_SHIRT, 1),
+                                Item.newItem(Items.JEANS, 2),
+                                Item.newItem(Items.DRESS, 3)),
                         124.94,
                         91.3,
                         4,
                         6
                 ),
                 Arguments.of(
-                        List.of(Item.newItem(Items.T_SHIRT, 4, cart),
-                                Item.newItem(Items.JEANS, 20, cart),
-                                Item.newItem(Items.DRESS, 59, cart)),
+                        List.of(Item.newItem(Items.T_SHIRT, 4),
+                                Item.newItem(Items.JEANS, 20),
+                                Item.newItem(Items.DRESS, 59)),
                         1770.31,
                         1243.4,
                         56,
                         83
                 ),
                 Arguments.of(
-                        List.of(Item.newItem(Items.T_SHIRT, 3, cart)),
+                        List.of(Item.newItem(Items.T_SHIRT, 3)),
                         38.97,
                         25.98,
                         2,
                         3
                 ),
                 Arguments.of(
-                        List.of(Item.newItem(Items.T_SHIRT, 2, cart),
-                                Item.newItem(Items.JEANS, 2, cart)),
+                        List.of(Item.newItem(Items.T_SHIRT, 2),
+                                Item.newItem(Items.JEANS, 2)),
                         75.98,
                         62.99,
                         3,

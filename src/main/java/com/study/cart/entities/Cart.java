@@ -1,11 +1,14 @@
 package com.study.cart.entities;
 
 import com.study.cart.utils.InstantUtils;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -30,7 +33,8 @@ public class Cart {
     @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP(6)")
     private Instant updatedAt;
 
-    @OneToMany(mappedBy = "cart")
+    @OneToMany(fetch = FetchType.EAGER,  cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "cart_id")
     private Set<Item> items;
 
     @Deprecated
@@ -54,12 +58,13 @@ public class Cart {
     }
 
     public Cart emptyItems() {
-        this.items = new HashSet<>();
+        this.items.clear();
+        this.totalItems = 0;
         this.updatedAt = InstantUtils.now();
         return this;
     }
 
-    public Cart addItem(final Item item){
+    public void addItem(final Item item){
         final Optional<Item> itemFound = this.items.stream().filter(it -> it.equals(item)).findFirst();
         if (itemFound.isEmpty()){
             this.items.add(item);
@@ -69,34 +74,27 @@ public class Cart {
 
         this.totalItems += item.getQuantity();
         this.updatedAt = InstantUtils.now();
-
-        return this;
     }
 
-    public Cart addItems(final List<Item> items){
+    public void addItems(final List<Item> items){
         items.forEach(this::addItem);
-        return this;
     }
 
-    public Cart removeItem(final Item item){
+    public void removeItem(final Item item){
         final Optional<Item> itemFound = this.items.stream().filter(it -> it.equals(item)).findFirst();
-        if (itemFound.isEmpty()){
-            return this;
+        if (itemFound.isPresent()){
+            final Item getItem = itemFound.get();
+
+            final int itemTotal = getItem.getQuantity();
+
+            getItem.remove(item.getQuantity());
+            if(getItem.getQuantity() <= 0){
+                this.items.remove(getItem);
+            }
+
+            this.totalItems -= Math.min(item.getQuantity(), itemTotal);
+            this.updatedAt = InstantUtils.now();
         }
-
-        final Item getItem = itemFound.get();
-
-        final int itemTotal = getItem.getQuantity();
-
-        getItem.remove(item.getQuantity());
-        if(getItem.getQuantity() <= 0){
-            this.items.remove(item);
-        }
-
-        this.totalItems -= Math.min(item.getQuantity(), itemTotal);
-        this.updatedAt = InstantUtils.now();
-
-        return this;
     }
 
     public Long getId() {

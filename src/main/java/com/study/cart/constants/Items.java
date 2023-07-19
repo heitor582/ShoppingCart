@@ -1,4 +1,4 @@
-package com.study.cart.contants;
+package com.study.cart.constants;
 
 public enum Items {
     T_SHIRT(1, "T-shirt", 12.99),
@@ -28,9 +28,9 @@ public enum Items {
     }
 
     public static Items valuesOf(final int id){
-        for (final Items i : values()) {
-            if (i.getId() == id) {
-                return i;
+        for (final Items item : values()) {
+            if (item.getId() == id) {
+                return item;
             }
         }
         return null;

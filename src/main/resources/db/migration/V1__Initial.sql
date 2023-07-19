@@ -10,7 +10,7 @@ CREATE TABLE items(
      name VARCHAR(255) NOT NULL,
      quantity INTEGER NOT NULL,
      price DOUBLE PRECISION NOT NULL,
-     cart_id SERIAL NOT NULL,
+     cart_id INTEGER,
         CONSTRAINT fk_id_cart FOREIGN KEY (cart_id)
         REFERENCES carts(id)
         ON DELETE CASCADE
