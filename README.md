@@ -14,7 +14,7 @@ This application is a simulation of a shopping cart, allowing users to create mu
 
 ### Architecture
 To build this shopping cart, I utilized an architecture similar to MVC, with services, controllers, and entities. For database access, JPA provides the repository. The flow follows Controller -> Service -> Entity and Repository. I aimed to maintain the responsibilities of entities within themselves, striving to keep the service responsible for receiving information, calling the entity to handle the logic, and saving it to the database.
-q
+
 # Clone
 ```bash
 # Clone github project
@@ -51,6 +51,13 @@ In the url after run the program access for enter the swagger and see all the ro
    - `DELETE /{id}/empty`-> empty a cart removing all his items
    - `PATCH /{id}/add/item`-> add item into a cart by his id
    - `PATCH /{id}/remove/item`-> remove item of a cart by his id
+
+### For the items its only possible to add items of this table
+| Product ID | Name    | Price     |
+|------------|---------|-----------|
+| 1          | T-shirt | USD 12.99 |
+| 2          | Jeans   | USD 25.00 |
+| 3          | Dress   | USD 20.65 |
 
 # Import archive of Postman
 ### First what is it Postman?
