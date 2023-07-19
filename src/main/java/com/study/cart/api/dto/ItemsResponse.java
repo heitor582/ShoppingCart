@@ -1,7 +1,7 @@
 package com.study.cart.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.study.cart.entities.Item;
+import com.study.cart.service.dtos.ItemOutput;
 
 record ItemsResponse(
         @JsonProperty("name") String name,
@@ -9,12 +9,12 @@ record ItemsResponse(
         @JsonProperty("quantity") int quantity,
         @JsonProperty("total") double total
 ){
-    public static ItemsResponse from(final Item item){
+    public static ItemsResponse from(final ItemOutput output){
         return new ItemsResponse(
-                item.getName(),
-                item.getPrice(),
-                item.getQuantity(),
-                item.getTotalOf()
+                output.name(),
+                output.price(),
+                output.quantity(),
+                output.total()
         );
     }
 }
