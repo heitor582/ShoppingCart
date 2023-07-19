@@ -1,9 +1,11 @@
 package com.study.cart;
 
+import com.study.cart.configuration.ObjectMapperConfig;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -14,6 +16,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @AutoConfigureMockMvc
 @ExtendWith(SQLCleanUpExtension.class)
+@Import(ObjectMapperConfig.class)
 public abstract class IntegrationTest {
     @Autowired
     protected MockMvc http;

@@ -1,15 +1,16 @@
 package com.study.cart.pagination;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.function.Function;
 
 public record Pagination<T>(
-        int currentPage,
-        int perPage,
-        long total,
-        List<T> content
+        @JsonProperty("current_page") int currentPage,
+        @JsonProperty("per_page") int perPage,
+        @JsonProperty("total") long total,
+        @JsonProperty("content") List<T> content
 ) {
     public <R> Pagination<R> map(final Function<T, R> mapper) {
         final List<R> newList = this.content.stream().map(mapper).toList();

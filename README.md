@@ -7,6 +7,7 @@ This application is a simulation of a shopping cart, allowing users to create mu
 - Spring Doc
 - PostgresSQL
 - Spring Web
+- Undertow
 - JPA
 - JUnit 5
 - TestContainers
@@ -36,6 +37,7 @@ $ ./gradlew test
 # Unit tests
 $ ./gradlew test --tests '*Test'
 # Integration tests
+# For Run the integration tests its necessary the docker up
 $ ./gradlew test --tests '*IT'
 ```
 # Executing OpenApi/Swagger
