@@ -346,6 +346,7 @@ class CartServiceTest extends UnitTest {
             final List<Item> items,
             final double totalPrice,
             final double discountPrice,
+            final double discount,
             final int totalPaidItems,
             final int totalItems
     ) {
@@ -362,7 +363,8 @@ class CartServiceTest extends UnitTest {
         assertEquals(totalPaidItems, output.totalPaidItems());
         assertEquals(totalPrice, output.totalPrice());
         assertEquals(totalItems, output.totalItems());
-        assertEquals(discountPrice, output.discountPrice());
+        assertEquals(discountPrice, output.discountedPrice());
+        assertEquals(discount, output.discount());
         assertEquals(0, cart.getTotalItems());
     }
 
@@ -373,7 +375,8 @@ class CartServiceTest extends UnitTest {
                                 Item.newItem(Items.JEANS, 2),
                                 Item.newItem(Items.DRESS, 3)),
                         124.94,
-                        91.3,
+                        91.30,
+                        33.64,
                         4,
                         6
                 ),
@@ -382,7 +385,8 @@ class CartServiceTest extends UnitTest {
                                 Item.newItem(Items.JEANS, 20),
                                 Item.newItem(Items.DRESS, 59)),
                         1770.31,
-                        1243.4,
+                        1243.40,
+                        526.91,
                         56,
                         83
                 ),
@@ -390,6 +394,7 @@ class CartServiceTest extends UnitTest {
                         List.of(Item.newItem(Items.T_SHIRT, 3)),
                         38.97,
                         25.98,
+                        12.99,
                         2,
                         3
                 ),
@@ -398,6 +403,7 @@ class CartServiceTest extends UnitTest {
                                 Item.newItem(Items.JEANS, 2)),
                         75.98,
                         62.99,
+                        12.99,
                         3,
                         4
                 )

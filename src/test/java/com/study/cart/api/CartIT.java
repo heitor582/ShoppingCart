@@ -261,6 +261,7 @@ class CartIT extends IntegrationTest {
             final List<Item> items,
             final double totalPrice,
             final double discountPrice,
+            final double discount,
             final int totalPaidItems,
             final int totalItems
     ) throws Exception{
@@ -275,7 +276,8 @@ class CartIT extends IntegrationTest {
         response.andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.total_price", equalTo(totalPrice)))
-                .andExpect(jsonPath("$.discount_price", equalTo(discountPrice)))
+                .andExpect(jsonPath("$.discounted_price", equalTo(discountPrice)))
+                .andExpect(jsonPath("$.discount", equalTo(discount)))
                 .andExpect(jsonPath("$.total_items", equalTo(totalItems)))
                 .andExpect(jsonPath("$.total_paid_items", equalTo(totalPaidItems)));
 
@@ -289,7 +291,8 @@ class CartIT extends IntegrationTest {
                                 Item.newItem(Items.JEANS, 2),
                                 Item.newItem(Items.DRESS, 3)),
                         124.94,
-                        91.3,
+                        91.30,
+                        33.64,
                         4,
                         6
                 ),
@@ -297,6 +300,7 @@ class CartIT extends IntegrationTest {
                         List.of(Item.newItem(Items.T_SHIRT, 3)),
                         38.97,
                         25.98,
+                        12.99,
                         2,
                         3
                 ),
@@ -305,6 +309,7 @@ class CartIT extends IntegrationTest {
                                 Item.newItem(Items.JEANS, 2)),
                         75.98,
                         62.99,
+                        12.99,
                         3,
                         4
                 )

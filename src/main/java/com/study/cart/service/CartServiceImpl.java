@@ -90,15 +90,16 @@ public class CartServiceImpl implements CartService{
             }
         }
 
-        final double totalDiscountPrice = items.stream().map(Item::getTotalOf).reduce(0.0, Double::sum);
+        final double totalDiscountedPrice = items.stream().map(Item::getTotalOf).reduce(0.0, Double::sum);
 
         repository.save(cart.emptyItems());
 
         LOGGER.info("[CART-CLOSED] [SUCCESSFULLY] Cart with identifier: {} was closed and clean", id);
 
-        return new CloseCartOutput(
+        return CloseCartOutput.from(
                 totalPrice,
-                totalDiscountPrice,
+                totalDiscountedPrice,
+                totalPrice - totalDiscountedPrice,
                 totalItems,
                 totalItems - totalDiscountItems
         );

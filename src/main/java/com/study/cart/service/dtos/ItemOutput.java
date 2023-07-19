@@ -1,7 +1,7 @@
 package com.study.cart.service.dtos;
 
 import com.study.cart.entities.Item;
-
+import com.study.cart.utils.DoubleUtils;
 import java.io.Serializable;
 
 public record ItemOutput(
@@ -14,7 +14,7 @@ public record ItemOutput(
     public static ItemOutput from(final Item item){
         return new ItemOutput(
                 item.getName(),
-                item.getPrice(),
+                DoubleUtils.roundToTwoDecimalPlaces(item.getPrice()),
                 item.getQuantity(),
                 item.getTotalOf()
         );
