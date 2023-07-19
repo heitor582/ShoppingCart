@@ -6,11 +6,10 @@ import com.study.cart.service.dtos.CloseCartOutput;
 import com.study.cart.service.dtos.CreateCartOutput;
 import com.study.cart.service.dtos.ItemOperationInput;
 import com.study.cart.service.dtos.ListCartOutput;
-import org.springframework.data.domain.Pageable;
 
 public interface CartService {
     CreateCartOutput create();
-    Pagination<ListCartOutput> list(final Pageable page);
+    Pagination<ListCartOutput> list(final int page, final int perPage);
     CartOutput getById(final Long id);
     CloseCartOutput close(final Long id);
     CartOutput emptyById(final Long id);

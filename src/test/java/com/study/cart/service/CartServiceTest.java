@@ -15,7 +15,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -48,30 +48,32 @@ class CartServiceTest extends UnitTest {
     @Test
     public void givenAValidPage_whenCallsListCart_shouldReturnPageableCarts() {
         //given
-        final var page = PageRequest.of(0, 10);
-        when(cartRepository.findAll(page)).thenReturn(new PageImpl<>(List.of()));
+        final var page = 0;
+        final var perPage = 10;
+        when(cartRepository.findAll((Pageable) any())).thenReturn(new PageImpl<>(List.of()));
 
         //when
-        final var output = cartService.list(page);
+        final var output = cartService.list(page, perPage);
 
         //then
-        assertEquals(output.currentPage(), page.getPageNumber());
+        assertEquals(output.currentPage(), page);
         assertEquals(output.content(), List.of());
     }
 
     @Test
     public void givenAValidPage_whenCallsListCartWithPrePersistedCarts_shouldReturnPageableCarts() {
         //given
-        final var page = PageRequest.of(0, 10);
+        final var page = 0;
+        final var perPage = 10;
         final List<Cart> carts = List.of(Cart.newCart(), Cart.newCart());
 
-        when(cartRepository.findAll(page)).thenReturn(new PageImpl<>(carts));
+        when(cartRepository.findAll((Pageable) any())).thenReturn(new PageImpl<>(carts));
 
         //when
-        final var output = cartService.list(page);
+        final var output = cartService.list(page, perPage);
 
         //then
-        assertEquals(output.currentPage(), page.getPageNumber());
+        assertEquals(output.currentPage(), page);
         assertEquals(output.content().size(), carts.size());
     }
 

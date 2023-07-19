@@ -15,7 +15,9 @@ import com.study.cart.service.dtos.ListCartOutput;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,9 +39,14 @@ public class CartServiceImpl implements CartService{
     }
 
     @Override
-    public Pagination<ListCartOutput> list(final Pageable page) {
+    public Pagination<ListCartOutput> list(final int page, final int perPage) {
         LOGGER.info("[CART-LIST] [PROCESSING] Listing all carts on database");
-        return Pagination.from(repository.findAll(page)).map(ListCartOutput::from);
+        final Pageable pageable = PageRequest.of(
+                page,
+                perPage,
+                Sort.by(Sort.Direction.fromString("asc"), "id")
+        );
+        return Pagination.from(repository.findAll(pageable)).map(ListCartOutput::from);
     }
 
     @Override

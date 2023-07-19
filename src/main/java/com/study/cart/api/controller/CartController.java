@@ -8,7 +8,6 @@ import com.study.cart.api.dto.CloseResponse;
 import com.study.cart.pagination.Pagination;
 import com.study.cart.service.CartService;
 import com.study.cart.service.dtos.ItemOperationInput;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,8 +35,8 @@ public class CartController implements CartAPI {
     }
 
     @Override
-    public ResponseEntity<Pagination<CartsListResponse>> list(final Pageable page) {
-        return ResponseEntity.ok(service.list(page).map(CartsListResponse::from));
+    public ResponseEntity<Pagination<CartsListResponse>> list(final int page, final int perPage) {
+        return ResponseEntity.ok(service.list(page, perPage).map(CartsListResponse::from));
     }
 
     @Override

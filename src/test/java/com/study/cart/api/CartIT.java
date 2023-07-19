@@ -143,7 +143,7 @@ class CartIT extends IntegrationTest {
                 .andExpect(jsonPath("$.total", equalTo(expectedTotal)))
                 .andExpect(jsonPath("$.content", hasSize(1)));
 
-        verify(service).list(any());
+        verify(service).list(expectedPage, expectedPerPage);
     }
 
     @Test
