@@ -7,7 +7,13 @@ import com.study.cart.entities.Item;
 import com.study.cart.exception.NotFoundException;
 import com.study.cart.exception.NotFoundFromItemEnum;
 import com.study.cart.jpa.CartRepository;
+import com.study.cart.pagination.Pagination;
+import com.study.cart.service.dtos.CartOutput;
+import com.study.cart.service.dtos.CloseCartOutput;
+import com.study.cart.service.dtos.CreateCartOutput;
 import com.study.cart.service.dtos.ItemOperationInput;
+import com.study.cart.service.dtos.ItemOutput;
+import com.study.cart.service.dtos.ListCartOutput;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -48,12 +54,12 @@ class CartServiceTest extends UnitTest {
     @Test
     public void givenAValidPage_whenCallsListCart_shouldReturnPageableCarts() {
         //given
-        final var page = 0;
-        final var perPage = 10;
+        final int page = 0;
+        final int perPage = 10;
         when(cartRepository.findAll((Pageable) any())).thenReturn(new PageImpl<>(List.of()));
 
         //when
-        final var output = cartService.list(page, perPage);
+        final Pagination<ListCartOutput> output = cartService.list(page, perPage);
 
         //then
         assertEquals(output.currentPage(), page);
@@ -63,14 +69,14 @@ class CartServiceTest extends UnitTest {
     @Test
     public void givenAValidPage_whenCallsListCartWithPrePersistedCarts_shouldReturnPageableCarts() {
         //given
-        final var page = 0;
-        final var perPage = 10;
+        final int page = 0;
+        final int perPage = 10;
         final List<Cart> carts = List.of(Cart.newCart(), Cart.newCart());
 
         when(cartRepository.findAll((Pageable) any())).thenReturn(new PageImpl<>(carts));
 
         //when
-        final var output = cartService.list(page, perPage);
+        final Pagination<ListCartOutput> output = cartService.list(page, perPage);
 
         //then
         assertEquals(output.currentPage(), page);
@@ -83,7 +89,7 @@ class CartServiceTest extends UnitTest {
         when(cartRepository.save(any())).thenAnswer(returnsFirstArg());
 
         //when
-        final var output = cartService.create();
+        final CreateCartOutput output = cartService.create();
 
         //then
         assertNotNull(output);
@@ -105,7 +111,7 @@ class CartServiceTest extends UnitTest {
         when(cartRepository.findById(expectedId)).thenReturn(Optional.of(cart));
 
         //when
-        final var output = cartService.getById(expectedId);
+        final CartOutput output = cartService.getById(expectedId);
 
         //then
         assertNotNull(output);
@@ -113,7 +119,7 @@ class CartServiceTest extends UnitTest {
         assertEquals(cart.getCreatedAt(), output.createdAt());
         assertEquals(cart.getUpdatedAt(), output.updatedAt());
         assertEquals(cart.getTotalItems(), output.totalItems());
-        assertEquals(cart.getItems().stream().toList(), output.items());
+        assertEquals(cart.getItems().stream().map(ItemOutput::from).toList(), output.items());
 
         verify(cartRepository).findById(expectedId);
     }
@@ -121,13 +127,13 @@ class CartServiceTest extends UnitTest {
     @Test
     public void givenAnInvalidId_whenCallsFindById_shouldReturnNotFoundException(){
         //given
-        final var expectedId = 1L;
-        final var expectedErrorMessage = "Cart with ID %s was not found".formatted(expectedId);
+        final Long expectedId = 1L;
+        final String expectedErrorMessage = "Cart with ID %s was not found".formatted(expectedId);
 
         when(cartRepository.findById(expectedId)).thenReturn(Optional.empty());
 
         //when
-        final var exception = assertThrows(NotFoundException.class, () -> cartService.getById(expectedId));
+        final Exception exception = assertThrows(NotFoundException.class, () -> cartService.getById(expectedId));
 
         //then
         assertNotNull(exception);
@@ -151,7 +157,7 @@ class CartServiceTest extends UnitTest {
         when(cartRepository.save(any())).thenReturn(Cart.from(cart).emptyItems());
 
         //when
-        final var output = cartService.emptyById(expectedId);
+        final CartOutput output = cartService.emptyById(expectedId);
 
         //then
         assertNotNull(output);
@@ -173,7 +179,7 @@ class CartServiceTest extends UnitTest {
         when(cartRepository.save(any())).thenReturn(cart);
 
         //when
-        final var output = cartService.emptyById(expectedId);
+        final CartOutput output = cartService.emptyById(expectedId);
 
         //then
         assertNotNull(output);
@@ -194,7 +200,7 @@ class CartServiceTest extends UnitTest {
         when(cartRepository.save(any())).thenAnswer(returnsFirstArg());
 
         //when
-        final var output = cartService.addItem(ItemOperationInput.with(expectedId, 1, 10));
+        final CartOutput output = cartService.addItem(ItemOperationInput.with(expectedId, 1, 10));
 
         //then
         assertNotNull(output);
@@ -217,7 +223,7 @@ class CartServiceTest extends UnitTest {
         when(cartRepository.findById(expectedId)).thenReturn(Optional.of(Cart.from(cart)));
 
         //when
-        final var exception = assertThrows(NotFoundFromItemEnum.class, () -> cartService.addItem(ItemOperationInput.with(expectedId, 5, 10)));
+        final Exception exception = assertThrows(NotFoundFromItemEnum.class, () -> cartService.addItem(ItemOperationInput.with(expectedId, 5, 10)));
 
         //then
         assertNotNull(exception);
@@ -236,7 +242,7 @@ class CartServiceTest extends UnitTest {
 
         //when
         cartService.addItem(ItemOperationInput.with(expectedId, 1, 10));
-        final var output = cartService.addItem(ItemOperationInput.with(expectedId, 1, 10));
+        final CartOutput output = cartService.addItem(ItemOperationInput.with(expectedId, 1, 10));
 
         //then
         assertNotNull(output);
@@ -255,7 +261,7 @@ class CartServiceTest extends UnitTest {
         when(cartRepository.save(any())).thenAnswer(returnsFirstArg());
 
         //when
-        final var output = cartService.removeItem(ItemOperationInput.with(expectedId, 1, 10));
+        final CartOutput output = cartService.removeItem(ItemOperationInput.with(expectedId, 1, 10));
 
         //then
         assertNotNull(output);
@@ -278,7 +284,7 @@ class CartServiceTest extends UnitTest {
         when(cartRepository.save(any())).thenAnswer(returnsFirstArg());
 
         //when
-        final var output = cartService.removeItem(ItemOperationInput.with(expectedId, 1, 10));
+        final CartOutput output = cartService.removeItem(ItemOperationInput.with(expectedId, 1, 10));
 
         //then
         assertNotNull(output);
@@ -302,7 +308,7 @@ class CartServiceTest extends UnitTest {
         when(cartRepository.findById(expectedId)).thenReturn(Optional.of(Cart.from(cart)));
 
         //when
-        final var exception = assertThrows(NotFoundFromItemEnum.class, () -> cartService.removeItem(ItemOperationInput.with(expectedId, 5, 10)));
+        final Exception exception = assertThrows(NotFoundFromItemEnum.class, () -> cartService.removeItem(ItemOperationInput.with(expectedId, 5, 10)));
 
         //then
         assertNotNull(exception);
@@ -321,7 +327,7 @@ class CartServiceTest extends UnitTest {
         when(cartRepository.save(any())).thenAnswer(returnsFirstArg());
 
         //when
-        final var output = cartService.removeItem(ItemOperationInput.with(expectedId, 1, 10));
+        final CartOutput output = cartService.removeItem(ItemOperationInput.with(expectedId, 1, 10));
 
         //then
         assertNotNull(output);
@@ -350,7 +356,7 @@ class CartServiceTest extends UnitTest {
         when(cartRepository.findById(expectedId)).thenReturn(Optional.of(cart));
 
         //when
-        final var output = cartService.close(expectedId);
+        final CloseCartOutput output = cartService.close(expectedId);
 
         //then
         assertEquals(totalPaidItems, output.totalPaidItems());
