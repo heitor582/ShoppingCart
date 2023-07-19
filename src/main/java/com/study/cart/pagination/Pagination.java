@@ -3,6 +3,7 @@ package com.study.cart.pagination;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.domain.Page;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.function.Function;
 
@@ -11,7 +12,7 @@ public record Pagination<T>(
         @JsonProperty("per_page") int perPage,
         @JsonProperty("total") long total,
         @JsonProperty("content") List<T> content
-) {
+) implements Serializable {
     public <R> Pagination<R> map(final Function<T, R> mapper) {
         final List<R> newList = this.content.stream().map(mapper).toList();
 

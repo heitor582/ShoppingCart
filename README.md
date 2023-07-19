@@ -12,6 +12,8 @@ This application is a simulation of a shopping cart, allowing users to create mu
 - JUnit 5
 - TestContainers
 - Gradle
+- Redis
+- Docker
 
 ### Architecture
 To build this shopping cart, I utilized an architecture similar to MVC, with services, controllers, and entities. For database access, JPA provides the repository. The flow follows Controller -> Service -> Entity and Repository. I aimed to maintain the responsibilities of entities within themselves, striving to keep the service responsible for receiving information, calling the entity to handle the logic, and saving it to the database.

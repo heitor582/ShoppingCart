@@ -41,3 +41,15 @@ spring:
     baseline-on-migrate: true
     check-location: true
     enabled: true
+  cache:
+    type: redis
+  data:
+    redis:
+      host: ${redis-connection.host}
+      port: ${redis-connection.port}
+      timeout: 60s
+      lettuce:
+        cluster:
+          refresh:
+            period: 60s
+            adaptive: true

@@ -8,11 +8,14 @@ services:
       - "8080:8080"
     depends_on:
       - postgres
+      - redis
     environment:
       DATABASE_POSTGRESQL_USERNAME: cart
       DATABASE_POSTGRESQL_PASSWORD: cart
       DATABASE_POSTGRESQL_SCHEMA: cart
       DATABASE_POSTGRESQL_URL: postgres:5432
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
       PORT: 8080
   postgres:
     image: postgres
@@ -23,6 +26,13 @@ services:
       POSTGRES_USER: cart
       POSTGRES_PASSWORD: cart
       POSTGRES_DB: cart
+  redis:
+    container_name: redis
+    image: redis
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning
 
 networks:
   default:
