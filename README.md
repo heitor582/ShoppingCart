@@ -38,7 +38,7 @@ $ ./gradlew test
 # Unit tests
 $ ./gradlew test --tests '*Test'
 # Integration tests
-# For Run the integration tests its necessary the docker up
+# To Run the integration tests its necessary the docker up
 $ ./gradlew test --tests '*IT'
 ```
 # Executing OpenApi/Swagger
@@ -63,7 +63,7 @@ In the url after run the program access for enter the swagger and see all the ro
 | 3          | Dress   | USD 20.65 |
 
 # Import archive of Postman
-### First what is it Postman?
+### First what is Postman?
 Postman is a program to make, organize and view the result of api requests.
 ### Running the app
 At the root of the project is a json that contains data that the postman program processes and transforms into pre-made requests.
