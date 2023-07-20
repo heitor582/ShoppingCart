@@ -4,6 +4,10 @@ postgresql:
   schema: ${DATABASE_POSTGRESQL_SCHEMA:cart}
   url: ${DATABASE_POSTGRESQL_URL:localhost:5432}
 
+redis-connection:
+  host: ${REDIS_HOST:localhost}
+  port: ${REDIS_PORT:"6379"}
+
 spring:
   jpa:
     show-sql: false

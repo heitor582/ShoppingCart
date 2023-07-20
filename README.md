@@ -12,6 +12,7 @@ This application is a simulation of a shopping cart, allowing users to create mu
 - JUnit 5
 - TestContainers ( necessary docker )
 - Gradle
+- Redis
 - Docker and Docker Compose
 
 ### Architecture

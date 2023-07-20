@@ -15,6 +15,8 @@ import com.study.cart.service.dtos.ListCartOutput;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,6 +28,7 @@ import java.util.Objects;
 @Service
 public class CartServiceImpl implements CartService{
     private static final Logger LOGGER = LoggerFactory.getLogger(CartServiceImpl.class);
+    private static final String CACHE_KEY = "Carts";
     private final CartRepository repository;
 
     public CartServiceImpl(final CartRepository repository) {
@@ -33,12 +36,14 @@ public class CartServiceImpl implements CartService{
     }
 
     @Override
+    @CacheEvict(value = {CACHE_KEY}, allEntries = true)
     public CreateCartOutput create() {
         LOGGER.info("[CART-CREATION] [PROCESSING] Trying to create a new cart");
         return CreateCartOutput.from(repository.save(Cart.newCart()));
     }
 
     @Override
+    @Cacheable(cacheNames = {CACHE_KEY}, key = "{ #root.method.name, #page, #perPage }")
     public Pagination<ListCartOutput> list(final int page, final int perPage) {
         LOGGER.info("[CART-LIST] [PROCESSING] Listing all carts on database");
         final Pageable pageable = PageRequest.of(
@@ -50,6 +55,7 @@ public class CartServiceImpl implements CartService{
     }
 
     @Override
+    @Cacheable(cacheNames = {CACHE_KEY}, key = "{ #root.method.name, #id }")
     public CartOutput getById(final Long id) {
         LOGGER.info("[CART-GET] [PROCESSING] Get cart by his identifier: {}", id);
         return repository.findById(id).map(CartOutput::from)
@@ -58,6 +64,7 @@ public class CartServiceImpl implements CartService{
 
     @Override
     @Transactional
+    @CacheEvict(value = {CACHE_KEY}, allEntries = true)
     public CloseCartOutput close(final Long id) {
         LOGGER.info("[CART-CLOSING] [PROCESSING] Trying to close a cart by his identifier: {}", id);
         final Cart cart = repository.findById(id).orElseThrow(() -> NotFoundException.with(Cart.class, id));
@@ -100,6 +107,7 @@ public class CartServiceImpl implements CartService{
 
     @Override
     @Transactional
+    @CacheEvict(value = {CACHE_KEY}, allEntries = true)
     public CartOutput emptyById(final Long id) {
         LOGGER.info("[CART-EMPTY] [PROCESSING] Trying to clean a cart by his identifier: {}", id);
         final Cart cart = repository.findById(id).orElseThrow(() -> NotFoundException.with(Cart.class, id));
@@ -108,6 +116,7 @@ public class CartServiceImpl implements CartService{
 
     @Override
     @Transactional
+    @CacheEvict(value = {CACHE_KEY}, allEntries = true)
     public CartOutput removeItem(final ItemOperationInput input) {
         LOGGER.info("[CART-REMOVE-ITEM] [PROCESSING] Trying to remove item of a cart by his identifier: {}", input.cartId());
         final Cart cart = repository.findById(input.cartId()).orElseThrow(() -> NotFoundException.with(Cart.class, input.cartId()));
@@ -125,6 +134,7 @@ public class CartServiceImpl implements CartService{
 
     @Override
     @Transactional
+    @CacheEvict(value = {CACHE_KEY}, allEntries = true)
     public CartOutput addItem(final ItemOperationInput input) {
         LOGGER.info("[CART-ADD-ITEM] [PROCESSING] Trying to add item of a cart by his identifier: {}", input.cartId());
         final Cart cart = repository.findById(input.cartId()).orElseThrow(() -> NotFoundException.with(Cart.class, input.cartId()));

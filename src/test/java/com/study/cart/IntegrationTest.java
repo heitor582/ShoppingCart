@@ -41,5 +41,8 @@ public abstract class IntegrationTest {
 
         registry.add("spring.flyway.enabled", () -> false);
 
+        registry.add("spring.cache.type", () -> "NONE");
+
+        registry.add("spring.autoconfigure.exclude", () -> "org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration,org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration");
     }
 }

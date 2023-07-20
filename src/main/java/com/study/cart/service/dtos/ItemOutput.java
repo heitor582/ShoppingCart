@@ -2,6 +2,7 @@ package com.study.cart.service.dtos;
 
 import com.study.cart.entities.Item;
 import com.study.cart.utils.DoubleUtils;
+import java.io.Serializable;
 
 public record ItemOutput(
         String name,
@@ -9,7 +10,7 @@ public record ItemOutput(
         int quantity,
         double total
 
-) {
+)  implements Serializable {
     public static ItemOutput from(final Item item){
         return new ItemOutput(
                 item.getName(),
